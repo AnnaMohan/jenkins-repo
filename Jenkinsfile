@@ -21,7 +21,7 @@ pipeline {
                     env.BRANCH_NAME = "feature/auto-change-${timestamp}"
                 }
                 sh '''
-                cd your-repo
+                cd jenkins-repo
                 git checkout -b ${BRANCH_NAME}
                 echo "Another automated change at $(date)" >> update.txt
                 git add update.txt
