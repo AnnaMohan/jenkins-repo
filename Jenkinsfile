@@ -1,10 +1,9 @@
 pipeline {
     agent any
-    stages {
-        environment {
+     environment {
             GITHUB_TOKEN = credentials('githubpat-jenkins-repo')
         }
-        
+    stages {
         stage ("Clone Repo"){
             steps{
             sh '''
