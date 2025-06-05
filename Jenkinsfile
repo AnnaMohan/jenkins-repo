@@ -7,6 +7,7 @@ pipeline {
         stage ("Clone Repo"){
             steps{
             sh '''
+            rm -rf jenkins-repo
             git clone https://github.com/AnnaMohan/jenkins-repo.git
             cd jenkins-repo
             git config user.name "AnnaMohan"
