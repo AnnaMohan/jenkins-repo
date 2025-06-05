@@ -1,17 +1,47 @@
 pipeline {
     agent any
     stages {
-
-        stage ("SCM"){
+        environment {
+            GITHUB_TOKEN = credentials('githubpat-jenkins-repo')
+        }
+        
+        stage ("Clone Repo"){
             steps{
-            git url: 'https://github.com/AnnaMohan/basicassignment.git', branch: 'main'
+            sh '''
+            git clone https://github.com/AnnaMohan/jenkins-repo.git
+            cd jenkins-repo
+            git config user.name "AnnaMohan"
+            git config user.email "annamohan3@gmail.com"
+            '''
             }
         }
-        stage('Build') {
+        stage('Create Branch and Change') {
             steps {
-                echo 'Building..'
+                script {
+                    def timestamp = new Date().format("yyyyMMddHHmmss")
+                    env.BRANCH_NAME = "feature/auto-change-${timestamp}"
+                }
+                sh '''
+                cd your-repo
+                git checkout -b ${BRANCH_NAME}
+                echo "Another automated change at $(date)" >> update.txt
+                git add update.txt
+                git commit -m "Automated update at $(date)"
+                git push -u origin ${BRANCH_NAME}
+                '''
             }
         }
+
+        stage('Automated PR') {
+            steps {
+                sh '''
+                cd jenkins-repo
+                export GITHUB_TOKEN=${GITHUB_TOKEN}
+                hub pull-request -m "Automated PR: Update on $(date)" -b main
+                '''
+            }
+        }
+
         stage('Test') {
             steps {
                 echo 'Testing..'
